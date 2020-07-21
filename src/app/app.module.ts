@@ -10,6 +10,7 @@ import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 
 import { AuthService } from './_services/auth.service';
+import { ErrorInterceptorProvider } from './_interceptors/error.interceptor';
 
 @NgModule({
    declarations: [
@@ -25,7 +26,8 @@ import { AuthService } from './_services/auth.service';
       AppRoutingModule
    ],
    providers: [
-      AuthService
+      AuthService,
+      ErrorInterceptorProvider
    ],
    bootstrap: [
       AppComponent
