@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, retryWhen } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  baseUrl = 'http://localhost:5000/api/auth/'
-
+  baseUrl = 'http://localhost:5000/api/auth/';
+  jwthelper = new JwtHelperService();
+  decodedtoken: any;
 
   constructor(private http: HttpClient) { }
 
@@ -20,22 +22,29 @@ export class AuthService {
           // setting token in local storage
           if (user) {
             localStorage.setItem('token', user.token);
+            this.decodedtoken = this.jwthelper.decodeToken(user.token);
+            console.log(this.decodedtoken);
           }
         })
       );
   }
 
-  register(model: any){
+  register(model: any) {
     return this.http.post(this.baseUrl + 'register', model);
   }
 
+  // const decodedToken = helper.decodeToken(myRawToken);
+  // const expirationDate = helper.getTokenExpirationDate(myRawToken);
+  // const isExpired = helper.isTokenExpired(myRawToken);
+
   loggedIn() {
     const token = localStorage.getItem('token');
-    // shortcut for if statement, if token has value return true else return false
-    return !!token;
+    // !! shortcut for if statement, if token has value return true else return false
+    const result = this.jwthelper.isTokenExpired(token);
+    return !result;
   }
 
-  logout(){
+  logout() {
     localStorage.removeItem('token');
     console.log('logged out');
   }
